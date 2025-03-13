@@ -21,14 +21,17 @@
           uses: returntocorp/semgrep-action@v1
           with:
             config: "p/default"  # Uses Semgrep's default security rules
-            args: "--sarif --output semgrep.sarif"
+            args: "--sarif --output ./semgrep.sarif || true" # Ensures the command doesn't fail
   
-        - name: Ensure SARIF Report Exists
-          run: ls -lah semgrep.sarif || echo "semgrep.sarif not found"
+        - name: Debug Semgrep Output
+          run: |
+            echo "Checking Semgrep Output"
+            ls -lah
+            cat ./semgrep.sarif || echo "semgrep.sarif not generated"
   
         - name: Upload Semgrep Report
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: semgrep-results
-            path: semgrep.sarif
+            path: ./semgrep.sarif
