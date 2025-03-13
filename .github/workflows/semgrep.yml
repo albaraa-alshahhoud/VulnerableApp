@@ -21,7 +21,7 @@ jobs:
         uses: returntocorp/semgrep-action@v1
         with:
           config: "p/default"  # Uses Semgrep's default security rules
-          audit-on: warning    # Allows the scan to complete without failing the job
+          args: "--sarif --output semgrep.sarif"  # Generates SARIF report
 
       - name: Upload Semgrep Report
         if: always()
