@@ -1,37 +1,58 @@
-  name: Semgrep Code Scan
-  
-  on:
-    push:
-      branches:
-        - master
-    pull_request:
-      branches:
-        - master
-  
-  jobs:
-    semgrep:
-      name: Run Semgrep
-      runs-on: ubuntu-latest
-  
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-  
-        - name: Install Semgrep
-          run: pip install semgrep
-  
-        - name: Run Semgrep
-          run: semgrep --config=p/default --sarif --output semgrep.sarif || true
-  
-        - name: Debug Semgrep Output
-          run: |
-            echo "Checking Semgrep Output"
-            ls -lah
-            cat semgrep.sarif || echo "semgrep.sarif not generated"
-  
-        - name: Upload Semgrep Report
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-            name: semgrep-results
-            path: semgrep.sarif
+name: Security Code Scans
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  codeql:
+    name: Run CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Check for Java Source Files
+        run: find . -name "*.java" || echo "No Java files found!"
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+
+      - name: Build Project
+        run: |
+          if [ -f "mvnw" ]; then
+            ./mvnw clean package -DskipTests
+          elif [ -f "gradlew" ]; then
+            ./gradlew build
+          else
+            echo "No build system found"
+          fi
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          output: sarif
+
+      - name: Upload CodeQL SARIF Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-results
+          path: results.sarif
