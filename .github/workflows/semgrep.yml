@@ -57,3 +57,29 @@ jobs:
         with:
           name: codeql-results
           path: ./results/codeql.sarif
+  semgrep:
+    name: Run Semgrep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep
+        run: semgrep --config=p/default --sarif --output semgrep.sarif || true
+
+      - name: Debug Semgrep Output
+        run: |
+          echo "Checking Semgrep Output"
+          ls -lah
+          cat semgrep.sarif || echo "semgrep.sarif not generated"
+
+      - name: Upload Semgrep Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results
+          path: semgrep.sarif
