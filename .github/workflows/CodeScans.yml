@@ -1,4 +1,4 @@
-name: Security Code Scans
+name: Security Code Scans & Semgrep
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: java
+          languages: auto
 
       - name: Build with Gradle
         run: ./gradlew --no-daemon --stacktrace --warning-mode all build
@@ -57,8 +57,9 @@ jobs:
         with:
           name: codeql-results
           path: ./results/codeql.sarif
+
   semgrep:
-    name: Run Semgrep
+    name: Run Semgrep Analysis
     runs-on: ubuntu-latest
 
     steps:
@@ -68,18 +69,18 @@ jobs:
       - name: Install Semgrep
         run: pip install semgrep
 
-      - name: Run Semgrep
-        run: semgrep --config=p/default --sarif --output semgrep.sarif || true
+      - name: Run Semgrep for Java
+        run: semgrep --config=p/default --sarif --output ./results/semgrep.sarif || true
 
       - name: Debug Semgrep Output
         run: |
           echo "Checking Semgrep Output"
-          ls -lah
-          cat semgrep.sarif || echo "semgrep.sarif not generated"
+          ls -lah ./results
+          cat ./results/semgrep.sarif || echo "semgrep.sarif not generated"
 
-      - name: Upload Semgrep Report
+      - name: Upload Semgrep SARIF Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-results
-          path: semgrep.sarif
+          path: ./results/semgrep.sarif
