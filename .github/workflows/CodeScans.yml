@@ -56,7 +56,7 @@ jobs:
 
       - name: Verify CodeQL Installation
         run: |
-          ~/codeql/codeql --version
+          ~/codeql/codeql/codeql --version
 
       - name: Run CodeQL Analysis and Output JSON
         run: |
