@@ -50,13 +50,17 @@ jobs:
           mkdir -p ~/codeql
           curl -L https://github.com/github/codeql-cli-binaries/releases/latest/download/codeql-linux64.zip -o ~/codeql/codeql.zip
           unzip ~/codeql/codeql.zip -d ~/codeql
-          echo "export PATH=\"$HOME/codeql/codeql:\$PATH\"" >> $HOME/.bashrc
+          echo "export PATH=\"$HOME/codeql:\$PATH\"" >> $HOME/.bashrc
           source $HOME/.bashrc
+
+      - name: Verify CodeQL Installation
+        run: |
+          ~/codeql/codeql --version
 
       - name: Run CodeQL Analysis and Output JSON
         run: |
-          codeql database create codeql-db --language=java
-          codeql database analyze codeql-db --format=json --output=./results/codeql_defectdojo.json
+          ~/codeql/codeql database create codeql-db --language=java
+          ~/codeql/codeql database analyze codeql-db --format=json --output=./results/codeql_defectdojo.json
 
       - name: Upload CodeQL SARIF Report
         if: always()
@@ -71,7 +75,7 @@ jobs:
         with:
           name: codeql-defectdojo-results
           path: ./results/codeql_defectdojo.json
-
+          
   semgrep:
     name: Run Semgrep Analysis
     runs-on: ubuntu-latest
