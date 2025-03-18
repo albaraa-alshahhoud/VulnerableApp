@@ -35,7 +35,7 @@ jobs:
           languages: java
 
       - name: Build with Gradle
-        run: ./gradlew --no-daemon --stacktrace --warning-mode all build
+        run: ./gradlew --no-daemon --stacktrace --warning-mode all clean build
 
       - name: Ensure SARIF Directory Exists
         run: mkdir -p ./results
@@ -60,7 +60,7 @@ jobs:
 
       - name: Run CodeQL Analysis and Output JSON
         run: |
-          ~/codeql/codeql/codeql database create codeql-db --language=java
+          ~/codeql/codeql/codeql database create --language=java --command="./gradlew build" codeql-db
           ~/codeql/codeql/codeql database analyze codeql-db --format=json --output=./results/codeql_defectdojo.json
 
       - name: Upload CodeQL SARIF Report
