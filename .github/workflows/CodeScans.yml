@@ -1,4 +1,15 @@
-codeql:
+name: Security Code Scans & Semgrep
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  codeql:
     name: Run CodeQL Analysis
     runs-on: ubuntu-latest
     permissions:
@@ -61,7 +72,7 @@ codeql:
           name: codeql-defectdojo-results
           path: ./results/codeql_defectdojo.json
 
-semgrep:
+  semgrep:
     name: Run Semgrep Analysis
     runs-on: ubuntu-latest
 
