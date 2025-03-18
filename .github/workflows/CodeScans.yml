@@ -45,11 +45,10 @@ jobs:
         with:
           output: ./results/codeql.sarif
 
-      - name: Debug CodeQL Output
+      - name: Run CodeQL and Output JSON
         run: |
-          echo "Checking CodeQL Output"
-          ls -lah ./results
-          cat ./results/codeql.sarif || echo "codeql.sarif not generated"
+          gh codeql database create codeql-db --language=java
+          gh codeql analyze codeql-db --format=json --output=./results/codeql_defectdojo.json
 
       - name: Upload CodeQL SARIF Report
         if: always()
@@ -72,11 +71,8 @@ jobs:
       - name: Run Semgrep for Java
         run: semgrep --config=p/java --sarif --output ./results/semgrep.sarif || true
 
-      - name: Debug Semgrep Output
-        run: |
-          echo "Checking Semgrep Output"
-          ls -lah ./results
-          cat ./results/semgrep.sarif || echo "semgrep.sarif not generated"
+      - name: Run Semgrep for Java with JSON Output
+        run: semgrep --config=p/java --json --output ./results/semgrep_defectdojo.json || true
 
       - name: Upload Semgrep SARIF Report
         if: always()
