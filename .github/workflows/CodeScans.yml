@@ -60,8 +60,11 @@ jobs:
 
       - name: Run CodeQL Analysis and Output JSON
         run: |
-          ~/codeql/codeql/codeql database create --language=java --command="./gradlew build" codeql-db
+          ~/codeql/codeql/codeql database create codeql-db --language=java --command="./gradlew build"
           ~/codeql/codeql/codeql database analyze codeql-db --format=json --output=./results/codeql_defectdojo.json
+
+      - name: Debug CodeQL Database
+        run: ls -R codeql-db || echo "CodeQL Database is empty!"
 
       - name: Upload CodeQL SARIF Report
         if: always()
@@ -76,6 +79,7 @@ jobs:
         with:
           name: codeql-defectdojo-results
           path: ./results/codeql_defectdojo.json
+
           
   semgrep:
     name: Run Semgrep Analysis
