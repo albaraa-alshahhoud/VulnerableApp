@@ -60,7 +60,7 @@ jobs:
 
       - name: Run CodeQL Analysis and Output JSON
         run: |
-          ~/codeql/codeql/codeql database create codeql-db --language=java --command="./gradlew build"
+          ~/codeql/codeql/codeql database create codeql-db --language=java --command="./gradlew --warning-mode all clean build"
           ~/codeql/codeql/codeql database analyze codeql-db --format=json --output=./results/codeql_defectdojo.json
 
       - name: Debug CodeQL Database
