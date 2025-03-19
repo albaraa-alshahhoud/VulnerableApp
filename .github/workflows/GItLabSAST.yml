@@ -1,3 +1,4 @@
+
 name: SAST Security Scan
 
 on:
@@ -9,22 +10,20 @@ on:
       - master
 
 jobs:
-   semgrep-sast:
+  semgrep-sast:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Verify Files Exist
-        run: ls -la $GITHUB_WORKSPACE
-
       - name: Run Semgrep (Multi-Language Security Scan)
         run: |
           docker run --rm -v $GITHUB_WORKSPACE:/src registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:2 \
           semgrep --config auto --json --output /src/semgrep-report.json /src || echo "Semgrep failed, check errors"
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
+          
+      - name: Upload Semgrep JSON Report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: semgrep-report
-          path: semgrep-report.json
+          name: semgrep-results
+          path: ./semgrep-report.json
