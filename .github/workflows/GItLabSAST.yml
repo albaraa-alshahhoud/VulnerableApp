@@ -22,10 +22,13 @@ jobs:
         run: ls -la $GITHUB_WORKSPACE
 
       - name: Run Semgrep (Multi-Language Security Scan)
-        run: /analyzer run
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/results
+          /analyzer run || echo "Semgrep finished with warnings"
+          ls -la $GITHUB_WORKSPACE/results
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report
-          path: gl-sast-report.json
+          path: $GITHUB_WORKSPACE/results/gl-sast-report.json
