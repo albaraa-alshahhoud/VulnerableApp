@@ -22,15 +22,16 @@ jobs:
 
       - name: Run Semgrep (Multi-Language Security Scan)
         run: |
-          mkdir -p /tmp/artifacts
-          #echo "Scanning directory: $GITHUB_WORKSPACE"
-          #find $GITHUB_WORKSPACE -type f  # Log all files being considered
-          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir /tmp/artifacts --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
-          ls -la /
-          cat /analyzer
+          export CI_PROJECT_DIR=$GITHUB_WORKSPACE
+          echo "Scanning directory: $CI_PROJECT_DIR"
+          find $CI_PROJECT_DIR -type f  # Log all files before scan
+          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $CI_PROJECT_DIR --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
+          echo "Checking if report exists:"
+          find /tmp/artifacts -type f  # Log generated report files
+          find $CI_PROJECT_DIR -type f  # Log all files after scan
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report
-          path: /tmp/artifacts/gl-sast-report.json
+          path: $GITHUB_WORKSPACE/gl-sast-report.json
