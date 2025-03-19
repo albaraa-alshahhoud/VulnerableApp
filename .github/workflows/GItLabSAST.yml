@@ -23,9 +23,9 @@ jobs:
       - name: Run Semgrep (Multi-Language Security Scan)
         run: |
           mkdir -p /tmp/artifacts
-          echo "Scanning directory: $GITHUB_WORKSPACE"
-          find $GITHUB_WORKSPACE -type f  # Log all files being considered
-          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir /tmp/artifacts || echo "Semgrep finished with warnings"
+          #echo "Scanning directory: $GITHUB_WORKSPACE"
+          #find $GITHUB_WORKSPACE -type f  # Log all files being considered
+          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir /tmp/artifacts --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
           ls -la /tmp/artifacts
 
       - name: Upload Report
