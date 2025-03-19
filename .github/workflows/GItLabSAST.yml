@@ -1,4 +1,4 @@
-name: SAST Analysis
+name: SAST Security Scan
 
 on:
   push:
@@ -9,45 +9,107 @@ on:
       - master
 
 jobs:
-  sast-analysis:
-    name: Run Static Application Security Testing
+  bandit-sast:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Run Semgrep (General Security Analysis)
-        uses: returntocorp/semgrep-action@v1
-        with:
-          config: "p/default"
+      - name: Run Bandit (Python Security Scanner)
+        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/bandit:2 bandit -r /src -f json -o bandit-report.json
 
-      - name: Run Bandit (Python Security Analysis)
-        run: |
-          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/bandit:latest bandit -r /src
-
-      - name: Run Brakeman (Ruby Security Analysis)
-        run: |
-          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/brakeman:latest brakeman /src
-
-      - name: Run Gosec (Go Security Analysis)
-        run: |
-          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/gosec:latest gosec -fmt=json -out report.json /src
-
-      - name: Run Node.js Security Scan (ESLint + Nodejs-scan)
-        run: |
-          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/nodejs-scan:latest /src
-
-      - name: Run Flawfinder (C/C++ Security Analysis)
-        run: |
-          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/flawfinder:latest flawfinder /src
-
-      - name: Run PMD Apex (Salesforce Security Analysis)
-        run: |
-          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/pmd-apex:latest /src
-
-      - name: Upload Reports as Artifacts
+      - name: Upload Report
         uses: actions/upload-artifact@v3
         with:
-          name: sast-reports
-          path: ./report.json
+          name: bandit-report
+          path: bandit-report.json
+
+  eslint-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run ESLint Security Scan
+        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/eslint:2 eslint "/src" --output-file eslint-report.json --format json
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: eslint-report
+          path: eslint-report.json
+
+  flawfinder-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run Flawfinder (C/C++ Security Scan)
+        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/flawfinder:2 flawfinder --json /src > flawfinder-report.json
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: flawfinder-report
+          path: flawfinder-report.json
+
+  gosec-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run Gosec (Go Security Scanner)
+        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/gosec:2 gosec -fmt json -out gosec-report.json /src
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: gosec-report
+          path: gosec-report.json
+
+  nodejs-scan-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run NodeJS Scan
+        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/nodejs-scan:2 nodejsscan -d /src -o nodejs-scan-report.json
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: nodejs-scan-report
+          path: nodejs-scan-report.json
+
+  phpcs-security-audit-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run PHP Security Scan
+        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/phpcs-security-audit:2 phpcs -q --report=json /src > phpcs-security-audit-report.json
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: phpcs-security-audit-report
+          path: phpcs-security-audit-report.json
+
+  semgrep-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run Semgrep (Multi-Language Security Scan)
+        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:2 semgrep --config auto --json --output semgrep-report.json /src
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: semgrep-report
+          path: semgrep-report.json
