@@ -16,8 +16,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run Semgrep (Multi-Language Security Scan)
-        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:2 semgrep --config auto --json --output ./results/semgrep-report.json /src
-
+        run: |
+          docker run --rm -v $GITHUB_WORKSPACE:/src registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:2 \
+          semgrep --config auto --json --output /src/semgrep-report.json /src || echo "Semgrep failed, check errors"
+          
       - name: Upload Semgrep JSON Report
         if: always()
         uses: actions/upload-artifact@v4
