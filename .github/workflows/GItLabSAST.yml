@@ -25,7 +25,7 @@ jobs:
           mkdir -p /tmp/artifacts
           echo "Scanning directory: $GITHUB_WORKSPACE"
           find $GITHUB_WORKSPACE -type f  # Log all files being considered
-          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir /tmp/artifacts --ignored-dirs "" --max-depth 10 || echo "Semgrep finished with warnings"
+          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir /tmp/artifacts || echo "Semgrep finished with warnings"
           ls -la /tmp/artifacts
 
       - name: Upload Report
