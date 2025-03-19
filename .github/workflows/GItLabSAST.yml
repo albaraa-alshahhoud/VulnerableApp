@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-   semgrep-sast:
+  semgrep-sast:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -23,8 +23,3 @@ jobs:
         with:
           name: semgrep-report
           path: semgrep-report.json
-
-      - name: Download Report
-        uses: actions/download-artifact@v3
-        with:
-          name: semgrep-report
