@@ -1,0 +1,51 @@
+name: SAST Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  sast-analysis:
+    name: Run Static Application Security Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep (General Security Analysis)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "p/default"
+
+      - name: Run Bandit (Python Security Analysis)
+        run: |
+          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/bandit:latest bandit -r /src
+
+      - name: Run Brakeman (Ruby Security Analysis)
+        run: |
+          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/brakeman:latest brakeman /src
+
+      - name: Run Gosec (Go Security Analysis)
+        run: |
+          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/gosec:latest gosec -fmt=json -out report.json /src
+
+      - name: Run Node.js Security Scan (ESLint + Nodejs-scan)
+        run: |
+          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/nodejs-scan:latest /src
+
+      - name: Run Flawfinder (C/C++ Security Analysis)
+        run: |
+          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/flawfinder:latest flawfinder /src
+
+      - name: Run PMD Apex (Salesforce Security Analysis)
+        run: |
+          docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/pmd-apex:latest /src
+
+      - name: Upload Reports as Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: sast-reports
+          path: ./report.json
