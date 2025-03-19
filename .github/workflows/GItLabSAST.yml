@@ -17,8 +17,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Verify Files Exist
-        run: ls -laR $GITHUB_WORKSPACE
+      # - name: Verify Files Exist
+      #   run: ls -laR $GITHUB_WORKSPACE
 
       - name: Run Semgrep (Multi-Language Security Scan)
         run: |
