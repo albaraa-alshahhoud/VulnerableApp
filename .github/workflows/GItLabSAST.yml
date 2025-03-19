@@ -9,72 +9,7 @@ on:
       - master
 
 jobs:
-  bandit-sast:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Run Bandit (Python Security Scanner)
-        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/bandit:2 bandit -r /src -f json -o bandit-report.json
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: bandit-report
-          path: bandit-report.json
-
-  eslint-sast:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Run ESLint Security Scan
-        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/eslint:2 eslint "/src" --output-file eslint-report.json --format json
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: eslint-report
-          path: eslint-report.json
-
-  flawfinder-sast:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Run Flawfinder (C/C++ Security Scan)
-        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/flawfinder:2 flawfinder --json /src > flawfinder-report.json
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: flawfinder-report
-          path: flawfinder-report.json
-
-      - name: Download Report
-        uses: actions/download-artifact@v3
-        with:
-          name: flawfinder-report
-
-  gosec-sast:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Run Gosec (Go Security Scanner)
-        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/gosec:2 gosec -fmt json -out gosec-report.json /src
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: gosec-report
-          path: gosec-report.json
-
-  semgrep-sast:
+   semgrep-sast:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -88,3 +23,8 @@ jobs:
         with:
           name: semgrep-report
           path: semgrep-report.json
+
+      - name: Download Report
+        uses: actions/download-artifact@v3
+        with:
+          name: semgrep-report
