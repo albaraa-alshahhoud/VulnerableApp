@@ -27,7 +27,6 @@ jobs:
           find $CI_PROJECT_DIR -type f  # Log all files before scan
           /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $CI_PROJECT_DIR --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
           echo "Checking if report exists:"
-          find /tmp/artifacts -type f  # Log generated report files
           find $CI_PROJECT_DIR -type f  # Log all files after scan
 
       - name: Upload Report
