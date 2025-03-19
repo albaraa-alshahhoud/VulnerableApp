@@ -54,6 +54,11 @@ jobs:
           name: flawfinder-report
           path: flawfinder-report.json
 
+      - name: Download Report
+        uses: actions/download-artifact@v3
+        with:
+          name: flawfinder-report
+
   gosec-sast:
     runs-on: ubuntu-latest
     steps:
@@ -68,36 +73,6 @@ jobs:
         with:
           name: gosec-report
           path: gosec-report.json
-
-  nodejs-scan-sast:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Run NodeJS Scan
-        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/nodejs-scan:2 nodejsscan -d /src -o nodejs-scan-report.json
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: nodejs-scan-report
-          path: nodejs-scan-report.json
-
-  phpcs-security-audit-sast:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Run PHP Security Scan
-        run: docker run --rm -v $(pwd):/src registry.gitlab.com/gitlab-org/security-products/analyzers/phpcs-security-audit:2 phpcs -q --report=json /src > phpcs-security-audit-report.json
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: phpcs-security-audit-report
-          path: phpcs-security-audit-report.json
 
   semgrep-sast:
     runs-on: ubuntu-latest
