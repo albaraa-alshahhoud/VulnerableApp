@@ -9,6 +9,7 @@ on:
     branches:
       - master
 
+
 jobs:
    semgrep-sast:
     runs-on: ubuntu-latest
@@ -23,12 +24,11 @@ jobs:
 
       - name: Run Semgrep (Multi-Language Security Scan)
         run: |
-          mkdir -p $GITHUB_WORKSPACE/results
-          /analyzer run || echo "Semgrep finished with warnings"
-          ls -la $GITHUB_WORKSPACE/results
+          /analyzer run --output /src/gl-sast-report.json || echo "Semgrep finished with warnings"
+          ls -la /src
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report
-          path: $GITHUB_WORKSPACE/results/gl-sast-report.json
+          path: /src/gl-sast-report.json
