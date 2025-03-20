@@ -20,7 +20,7 @@ jobs:
       - name: Find Relevant Files
         id: check_files
         run: |
-          files=$(find $GITHUB_WORKSPACE -type f \( -name "**/*.py" -o -name "**/*.js" -o -name "**/*.java" -o -name "**/*.ts" -o -name "**/*.tsx" -o -name "**/*.rb" -o -name "**/*.php" -o -name "**/*.c" -o -name "**/*.cpp" -o -name "**/*.go" \))
+          files=$(find $GITHUB_WORKSPACE -type f \( -name "*.py" -o -name "*.js" -o -name "*.java" -o -name "*.ts" -o -name "*.tsx" -o -name "*.rb" -o -name "*.php" -o -name "*.c" -o -name "*.cpp" -o -name "*.go" \))
           if [ -n "$files" ]; then
             echo "found=true" >> $GITHUB_ENV
           else
@@ -48,7 +48,7 @@ jobs:
       - name: Find Relevant Files
         id: check_files
         run: |
-          files=$(find $GITHUB_WORKSPACE -type f \( -name "**/*.groovy" -o -name "**/*.scala" -o -name "**/*.java" \))
+          files=$(find $GITHUB_WORKSPACE -type f \( -name "*.groovy" -o -name "*.scala" -o -name "*.java" \))
           if [ -n "$files" ]; then
             echo "found=true" >> $GITHUB_ENV
           else
