@@ -36,32 +36,4 @@ jobs:
         with:
           name: semgrep-report
           path: /__w/VulnerableApp/VulnerableApp/gl-sast-report.json
-          
-   Spotbugs-sast:
-    runs-on: ubuntu-latest
-    container:
-      image: registry.gitlab.com/gitlab-org/security-products/analyzers/spotbugs
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Find Relevant Files
-        id: check_files
-        run: |
-          files=$(find $GITHUB_WORKSPACE -type f \( -name "*.groovy" -o -name "*.scala" -o -name "*.java" \))
-          if [ -n "$files" ]; then
-            echo "found=true" >> $GITHUB_ENV
-          else
-            echo "found=false" >> $GITHUB_ENV
-          fi
-          
-      - name: Run Spotbugs (Multi-Language Security Scan)
-        if: env.found == 'true'
-        run: |
-          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $GITHUB_WORKSPACE/ --ignored-dirs "" --max-depth 10 || echo "spotbugs finished with warnings"
-      - name: Upload Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: spotbugs-report
-          path: /__w/VulnerableApp/VulnerableApp/gl-sast-report.json
       
