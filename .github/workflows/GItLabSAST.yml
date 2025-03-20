@@ -17,11 +17,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # - name: Verify Files Exist
-      #   run: ls -laR $GITHUB_WORKSPACE
+      - name: Find Relevant Files
+        id: check_files
+        run: |
+          files=$(find $GITHUB_WORKSPACE -type f \( -name "*.py" -o -name "*.js" -o -name "*.java" -o -name "*.ts" -o -name "*.tsx" -o -name "*.rb" -o -name "*.php" -o -name "*.c" -o -name "*.cpp" -o -name "*.go" \))
+          if [ -n "$files" ]; then
+            echo "found=true" >> $GITHUB_ENV
+          else
+            echo "found=false" >> $GITHUB_ENV
+          fi
 
       - name: Run Semgrep (Multi-Language Security Scan)
-        if: "contains(github.workspace, '*.py') || contains(github.workspace, '*.js') || contains(github.workspace, '*.java') || contains(github.workspace, '*.ts') || contains(github.workspace, '*.tsx') || contains(github.workspace, '*.rb') || contains(github.workspace, '*.php') || contains(github.workspace, '*.c') || contains(github.workspace, '*.cpp') || contains(github.workspace, '*.go')"
+        if: env.found == 'true'
         run: |
           /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $GITHUB_WORKSPACE/ --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
       - name: Upload Report
