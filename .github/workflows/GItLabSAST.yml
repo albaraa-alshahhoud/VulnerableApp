@@ -26,7 +26,7 @@ jobs:
           echo "Checking if report exists:"
           ls -la $ANALYZER_ARTIFACT_DIR
           ls -la $GITHUB_WORKSPACE
-          cp $ANALYZER_ARTIFACT_DIR/gl-sast-report.json $GITHUB_WORKSPACE/gl-sast-report.json  # Ensure persistence
+          # cp $ANALYZER_ARTIFACT_DIR/gl-sast-report.json $GITHUB_WORKSPACE/gl-sast-report.json  # Ensure persistence
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
