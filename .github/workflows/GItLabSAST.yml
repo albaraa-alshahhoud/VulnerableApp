@@ -26,6 +26,7 @@ jobs:
           else
             echo "found=false" >> $GITHUB_ENV
           fi
+          echo env.found
 
       - name: Run Semgrep (Multi-Language Security Scan)
         if: env.found == 'true'
