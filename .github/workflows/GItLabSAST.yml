@@ -28,10 +28,9 @@ jobs:
           chmod 777 $GITHUB_WORKSPACE/gl-sast-report.json
           echo "Checking if report exists:"
           ls -la $GITHUB_WORKSPACE
-          cat $GITHUB_WORKSPACE/gl-sast-report.json
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report
-          path: $GITHUB_WORKSPACE/gl-sast-report.json
+          path: /__w/VulnerableApp/VulnerableApp/gl-sast-report.json
