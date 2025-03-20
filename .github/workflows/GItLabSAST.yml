@@ -26,7 +26,7 @@ jobs:
           else
             echo "found=false" >> $GITHUB_ENV
           fi
-          echo "Found variable is set to: $found"
+          echo "Found variable is set to: $GITHUB_ENV.found"
 
       - name: Run Semgrep (Multi-Language Security Scan)
         if: env.found == 'true'
