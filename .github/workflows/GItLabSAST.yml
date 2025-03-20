@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-   semgrep-sast:
+   sast:
     runs-on: ubuntu-latest
     container:
       image: registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:2
@@ -17,19 +17,43 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # - name: Verify Files Exist
-      #   run: ls -laR $GITHUB_WORKSPACE
+      - name: Run Bandit (Python Security Scan)
+        if: "contains(github.workspace, '*.py')"
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/src" registry.gitlab.com/gitlab-org/security-products/analyzers/bandit:2 /analyzer run --target-dir /src --artifact-dir /src
+
+      - name: Run Brakeman (Ruby on Rails Security Scan)
+        if: "contains(github.workspace, 'config/routes.rb')"
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/src" registry.gitlab.com/gitlab-org/security-products/analyzers/brakeman:2 /analyzer run --target-dir /src --artifact-dir /src
+
+      - name: Run ESLint (JavaScript/TypeScript Security Scan)
+        if: "contains(github.workspace, '*.js') || contains(github.workspace, '*.jsx') || contains(github.workspace, '*.ts') || contains(github.workspace, '*.tsx')"
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/src" registry.gitlab.com/gitlab-org/security-products/analyzers/eslint:2 /analyzer run --target-dir /src --artifact-dir /src
+
+      - name: Run Flawfinder (C/C++ Security Scan)
+        if: "contains(github.workspace, '*.c') || contains(github.workspace, '*.cpp')"
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/src" registry.gitlab.com/gitlab-org/security-products/analyzers/flawfinder:2 /analyzer run --target-dir /src --artifact-dir /src
+
+      - name: Run NodeJS Scan (NodeJS Security Scan)
+        if: "contains(github.workspace, 'package.json')"
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/src" registry.gitlab.com/gitlab-org/security-products/analyzers/nodejs-scan:2 /analyzer run --target-dir /src --artifact-dir /src
+
+      - name: Run PMD Apex (Salesforce Apex Security Scan)
+        if: "contains(github.workspace, '*.cls')"
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/src" registry.gitlab.com/gitlab-org/security-products/analyzers/pmd-apex:2 /analyzer run --target-dir /src --artifact-dir /src
 
       - name: Run Semgrep (Multi-Language Security Scan)
+        if: "contains(github.workspace, '*.py') || contains(github.workspace, '*.js') || contains(github.workspace, '*.java') || contains(github.workspace, '*.ts') || contains(github.workspace, '*.tsx') || contains(github.workspace, '*.rb') || contains(github.workspace, '*.php') || contains(github.workspace, '*.c') || contains(github.workspace, '*.cpp') || contains(github.workspace, '*.go')"
         run: |
-          # echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE" 
-          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $GITHUB_WORKSPACE/ --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
-          # chmod 777 $GITHUB_WORKSPACE/gl-sast-report.json
-          # echo "Checking if report exists:"
-          # ls -la $GITHUB_WORKSPACE
+          docker run --rm -v "$GITHUB_WORKSPACE:/src" registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:2 /analyzer run --target-dir /src --artifact-dir /src
 
-      - name: Upload Report
+      - name: Upload Reports
         uses: actions/upload-artifact@v4
         with:
-          name: semgrep-report
-          path: /__w/VulnerableApp/VulnerableApp/gl-sast-report.json
+          name: sast-reports
+          path: /__w/VulnerableApp/VulnerableApp/*.json
