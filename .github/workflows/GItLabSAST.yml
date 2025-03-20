@@ -25,10 +25,10 @@ jobs:
           echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE" 
           echo "ANALYZER_ARTIFACT_DIR: $ANALYZER_ARTIFACT_DIR"
           /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $GITHUB_WORKSPACE/ --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
+          sudo chmod 777 $GITHUB_WORKSPACE/gl-sast-report.json
           echo "Checking if report exists:"
-          ls -la $ANALYZER_ARTIFACT_DIR
           ls -la $GITHUB_WORKSPACE
-          # cp $ANALYZER_ARTIFACT_DIR/gl-sast-report.json $GITHUB_WORKSPACE/gl-sast-report.json  # Ensure persistence
+          cat $GITHUB_WORKSPACE/gl-sast-report.json
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
