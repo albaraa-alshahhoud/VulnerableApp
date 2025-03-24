@@ -1,4 +1,4 @@
-name: Security Code Scans & Semgrep
+name: CodeQL Security Code Scans
 
 on:
   push:
