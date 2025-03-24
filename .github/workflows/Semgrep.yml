@@ -21,7 +21,7 @@ jobs:
         run: pip install semgrep
 
       - name: Run Semgrep for Java
-        run: semgrep --config=p/java --json --output ./results/semgrep.json || true
+        run: semgrep --config=p/default --json --output ./results/semgrep.json || true
 
       - name: Debug Semgrep Output
         run: |
