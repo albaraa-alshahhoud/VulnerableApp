@@ -21,7 +21,7 @@ jobs:
         run: pip install semgrep
 
       - name: Run Semgrep for Java
-        run: semgrep --config=p/default --sarif --output ./results/semgrep.sarif || true
+        run: semgrep --config=p/java --sarif --output ./results/semgrep.sarif || true
 
       - name: Debug Semgrep Output
         run: |
