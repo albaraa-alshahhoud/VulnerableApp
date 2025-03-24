@@ -69,7 +69,7 @@ jobs:
         run: pip install semgrep
 
       - name: Run Semgrep for Java
-        run: semgrep --config=p/java --json --output ./results/semgrep.json || true
+        run: semgrep --config=p/default --sarif --output ./results/semgrep.sarif || true
 
       - name: Debug Semgrep Output
         run: |
