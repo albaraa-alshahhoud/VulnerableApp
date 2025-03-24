@@ -3,10 +3,10 @@ name: SAST Security Scan
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
    semgrep-sast:
