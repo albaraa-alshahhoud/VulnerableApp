@@ -56,6 +56,13 @@ jobs:
         with:
           name: codeql-results
           path: ./results/codeql.sarif
+      
+      - name: Upload CodeQL JSON Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-json-report
+          path: ./results/codeql.json
 
   semgrep:
     name: Run Semgrep Analysis
