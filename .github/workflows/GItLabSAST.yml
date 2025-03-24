@@ -12,7 +12,7 @@ jobs:
    semgrep-sast:
     runs-on: ubuntu-latest
     container:
-      image: registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:2
+      image: registry.gitlab.com/gitlab-org/security-products/analyzers/semgrep:4
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
       - name: Run Semgrep (Multi-Language Security Scan)
         if: env.found == 'true'
         run: |
-          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $GITHUB_WORKSPACE/ --ignored-dirs "" --max-depth 100 || echo "Semgrep finished with warnings"
+          /analyzer run --target-dir $GITHUB_WORKSPACE --artifact-dir $GITHUB_WORKSPACE/ --ignored-dirs "" --max-depth 20 || echo "Semgrep finished with warnings"
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
