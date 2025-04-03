@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  codeql:
+  CodeQL:
     name: Run CodeQL Analysis
     runs-on: ubuntu-latest
     permissions:
