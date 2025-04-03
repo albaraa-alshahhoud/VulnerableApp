@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:      
-  semgrep:
+  Semgrep:
     name: Run Semgrep Analysis
     runs-on: ubuntu-latest
 
