@@ -3,10 +3,10 @@ name: CodeQL Security Code Scans
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   CodeQL:
@@ -32,7 +32,8 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: java
+          languages: java, javascript
+            
 
       - name: Build with Gradle
         run: ./gradlew --no-daemon --stacktrace --warning-mode all build
