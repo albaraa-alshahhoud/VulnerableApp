@@ -3,10 +3,10 @@ name: CodeQL Security Code Scans
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   CodeQL:
